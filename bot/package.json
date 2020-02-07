@@ -11,5 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "koishi": "^1.8.0"
+  },
+  "dependencies": {
+    "mysql": "^2.18.1"
   }
 }

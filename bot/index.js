@@ -1,4 +1,5 @@
 const { App } = require('koishi')
+var mysql = require('mysql');
 
 const app = new App({
   type: 'http',
@@ -11,6 +12,16 @@ const app = new App({
 
 app.start()
 
+var con = mysql.createConnection({
+  host: "192.168.0.156",
+  user: "root",
+  password: "123456"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
 // app.receiver.on('message', (meta) => {
 //   // 如果收到“人有多大胆”
 //   console.log(meta.message)
@@ -20,6 +31,9 @@ app.start()
 //     meta.$send('地有多大产')
 //   }
 // })
+
+app.command('echo <message>')
+  .action(({ meta }, message) => meta.$send(message))
 
 app.middleware((meta, next) => {
   if (meta.message.includes(`[CQ:at,qq=${app.options.selfId}]`) || meta.message[0] === '.') {
