@@ -21,6 +21,10 @@ var con = mysql.createConnection({
 con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
+  con.query("CREATE DATABASE mydb", function (err, result) {
+    if (err) throw err;
+    console.log("Database created");
+  });
 });
 // app.receiver.on('message', (meta) => {
 //   // 如果收到“人有多大胆”
