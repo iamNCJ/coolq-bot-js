@@ -29,7 +29,7 @@ app.command('add <keyword> <responce>')
           meta.$send(`[CQ:at,qq=${meta.userId}] 我已经会说这个了！`)
         } else {
           responceData[groupId][keyword].push(responce)
-          console.log(responceData)
+          // console.log(responceData) // debug
           meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我说${responce}`)
         }
       }
@@ -39,8 +39,6 @@ app.command('add <keyword> <responce>')
 app.command('del <keyword> <responce>')
   .action(({ meta }, keyword, responce) => {
     if (meta.messageType === 'group') {
-      // console.log(keyword)
-      // console.log(responce)
       let groupId = meta.groupId;
       if (responce === undefined) {
         meta.$send(`[CQ:at,qq=${meta.userId}] 你差参数！`)
@@ -65,12 +63,12 @@ app.command('del <keyword> <responce>')
           meta.$send(`[CQ:at,qq=${meta.userId}] 我本来就不会说这个！`)
         }
       }
-      console.log(responceData)
+      // console.log(responceData) // debug
     }
   })
 
 app.middleware((meta, next) => {
-  if (meta.message.includes(`[CQ:at,qq=${app.options.selfId}]`) || meta.message[0] === '.') {
+  if (meta.message.includes(`[CQ:at,qq=${app.options.selfId}]`)) {
     // 仅当接收到的信息包含 at 机器人时才继续处理
     console.log(meta.message)
     return meta.$send(`[CQ:at,qq=${meta.userId}] @我干啥`)
