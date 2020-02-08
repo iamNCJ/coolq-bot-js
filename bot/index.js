@@ -49,7 +49,7 @@ app.command('del <keyword> <responce>')
       } else { // keyword is in data
         // console.log(responceData[groupId][keyword].indexOf(responce))
         if (responce == '/all') { // delete all
-          responceData[groupId][keyword] = null;
+          delete responceData[groupId][keyword]
           meta.$send(`[CQ:at,qq=${meta.userId}] 我再也不回应${keyword}啦`)
         } else if (responceData[groupId][keyword].indexOf(responce) + 1) {
           // responce is in data
@@ -57,7 +57,9 @@ app.command('del <keyword> <responce>')
             responceData[groupId][keyword].filter(function(value, index, arr){
               return value != responce
             })
-            // splice( responceData[groupId][keyword].indexOf(responce), 1 )
+            if (responceData[groupId][keyword].length === 0) { // check empty array
+              delete responceData[groupId][keyword]
+            }
           meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我也不说${responce}`)
         } else { // keyword in data but responce not in
           meta.$send(`[CQ:at,qq=${meta.userId}] 我本来就不会说这个！`)
