@@ -56,7 +56,7 @@ app.command('del <keyword> <responce>')
           responceData[groupId][keyword] = 
             responceData[groupId][keyword].filter(function(value, index, arr){
               return value != responce
-            })            
+            })
             // splice( responceData[groupId][keyword].indexOf(responce), 1 )
           meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我也不说${responce}`)
         } else { // keyword in data but responce not in
