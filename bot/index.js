@@ -16,6 +16,7 @@ app.command('echo <message>')
 
 var responceData = {}
 
+// add command
 app.command('add <keyword> <responce>')
   .action(({ meta }, keyword, responce) => {
     if (meta.messageType === 'group') {
@@ -36,6 +37,7 @@ app.command('add <keyword> <responce>')
     }
   })
 
+// del command
 app.command('del <keyword> <responce>')
   .action(({ meta }, keyword, responce) => {
     if (meta.messageType === 'group') {
@@ -67,6 +69,14 @@ app.command('del <keyword> <responce>')
     }
   })
 
+// message parser
+app.middleware((meta, next) => {
+  if (meta.messageType === 'group') {
+    ;
+  }
+})
+
+// @ handler
 app.middleware((meta, next) => {
   if (meta.message.includes(`[CQ:at,qq=${app.options.selfId}]`)) {
     // 仅当接收到的信息包含 at 机器人时才继续处理
@@ -78,6 +88,8 @@ app.middleware((meta, next) => {
   }
 })
 
+// repeater
+// TODO bug: fix repeat for different group
 let times = 0 // 已复读次数
 let message = '' // 当前信息
 
