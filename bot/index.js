@@ -83,7 +83,7 @@ app.middleware((meta, next) => {
 let times = 0 // 已复读次数
 let message = '' // 当前信息
 
-app.prependMiddleware((meta, next) => {
+app.middleware((meta, next) => {
   var repeatThreshold = 2        // 触发次数
   var atThreshold = 3            // Q人次数
   var interruptThreshold = 6     // 打破次数
