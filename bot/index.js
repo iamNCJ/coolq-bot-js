@@ -39,22 +39,31 @@ app.command('add <keyword> <responce>')
 app.command('del <keyword> <responce>')
   .action(({ meta }, keyword, responce) => {
     if (meta.messageType === 'group') {
+      // console.log(keyword)
+      // console.log(responce)
+      let groupId = meta.groupId;
       if (responce === undefined) {
         meta.$send(`[CQ:at,qq=${meta.userId}] 你差参数！`)
       } else if (!responceData[groupId] || !responceData[groupId][keyword]) {
         meta.$send(`[CQ:at,qq=${meta.userId}] 我本来就不会说这个！`)
-      } //else 
-      
-      
-      // if (responce === '/all') {
-      //   if (responceData[groupId][keyword].indexOf(responce) + 1) {
-      //     meta.$send(`[CQ:at,qq=${meta.userId}] 我已经会说这个了！`)
-      //   }
-      //   meta.$send(`[CQ:at,qq=${meta.userId}] 我再也不回应${keyword}啦`)
-      // } else {
-      //   meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我也不说${responce}`)
-      // }
-      // TODO save to buffer
+      } else { // keyword is in data
+        // console.log(responceData[groupId][keyword].indexOf(responce))
+        if (responce == '/all') { // delete all
+          responceData[groupId][keyword] = null;
+          meta.$send(`[CQ:at,qq=${meta.userId}] 我再也不回应${keyword}啦`)
+        } else if (responceData[groupId][keyword].indexOf(responce) + 1) {
+          // responce is in data
+          responceData[groupId][keyword] = 
+            responceData[groupId][keyword].filter(function(value, index, arr){
+              return value != responce
+            })            
+            // splice( responceData[groupId][keyword].indexOf(responce), 1 )
+          meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我也不说${responce}`)
+        } else { // keyword in data but responce not in
+          meta.$send(`[CQ:at,qq=${meta.userId}] 我本来就不会说这个！`)
+        }
+      }
+      console.log(responceData)
     }
   })
 
