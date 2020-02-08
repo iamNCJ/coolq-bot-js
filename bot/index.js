@@ -12,20 +12,21 @@ const app = new App({
 
 app.start()
 
-var con = mysql.createConnection({
-  host: "192.168.0.156",
-  user: "root",
-  password: "123456"
-});
+// var con = mysql.createConnection({
+//   host: "192.168.0.156",
+//   user: "root",
+//   password: "123456"
+// });
 
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  con.query("CREATE DATABASE mydb", function (err, result) {
-    if (err) throw err;
-    console.log("Database created");
-  });
-});
+// con.connect(function(err) {
+//   if (err) throw err;
+//   console.log("Connected!");
+//   con.query("CREATE DATABASE mydb", function (err, result) {
+//     if (err) throw err;
+//     console.log("Database created");
+//   });
+// });
+
 // app.receiver.on('message', (meta) => {
 //   // 如果收到“人有多大胆”
 //   console.log(meta.message)
