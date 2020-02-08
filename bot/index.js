@@ -1,5 +1,4 @@
 const { App } = require('koishi')
-var mysql = require('mysql');
 
 const app = new App({
   type: 'http',
@@ -12,38 +11,60 @@ const app = new App({
 
 app.start()
 
-// var con = mysql.createConnection({
-//   host: "192.168.0.156",
-//   user: "root",
-//   password: "123456"
-// });
-
-// con.connect(function(err) {
-//   if (err) throw err;
-//   console.log("Connected!");
-//   con.query("CREATE DATABASE mydb", function (err, result) {
-//     if (err) throw err;
-//     console.log("Database created");
-//   });
-// });
-
-// app.receiver.on('message', (meta) => {
-//   // 如果收到“人有多大胆”
-//   console.log(meta.message)
-//   console.log('')
-//   if (meta.message === '人有多大胆') {
-//     // 就回应“地有多大产”
-//     meta.$send('地有多大产')
-//   }
-// })
-
 app.command('echo <message>')
   .action(({ meta }, message) => meta.$send(message))
+
+var responceData = {}
+
+app.command('add <keyword> <responce>')
+  .action(({ meta }, keyword, responce) => {
+    if (meta.messageType === 'group') {
+      if (responce === undefined) {
+        meta.$send(`[CQ:at,qq=${meta.userId}] 你差参数！`)
+      } else {
+        let groupId = meta.groupId;
+        if (!responceData[groupId]) responceData[groupId] = {}
+        if (!responceData[groupId][keyword]) responceData[groupId][keyword] = []
+        if (responceData[groupId][keyword].indexOf(responce) + 1) {
+          meta.$send(`[CQ:at,qq=${meta.userId}] 我已经会说这个了！`)
+        } else {
+          responceData[groupId][keyword].push(responce)
+          console.log(responceData)
+          meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我说${responce}`)
+        }
+      }
+    }
+  })
+
+app.command('del <keyword> <responce>')
+  .action(({ meta }, keyword, responce) => {
+    if (meta.messageType === 'group') {
+      if (responce === undefined) {
+        meta.$send(`[CQ:at,qq=${meta.userId}] 你差参数！`)
+      } else if (!responceData[groupId] || !responceData[groupId][keyword]) {
+        meta.$send(`[CQ:at,qq=${meta.userId}] 我本来就不会说这个！`)
+      } //else 
+      
+      
+      // if (responce === '/all') {
+      //   if (responceData[groupId][keyword].indexOf(responce) + 1) {
+      //     meta.$send(`[CQ:at,qq=${meta.userId}] 我已经会说这个了！`)
+      //   }
+      //   meta.$send(`[CQ:at,qq=${meta.userId}] 我再也不回应${keyword}啦`)
+      // } else {
+      //   meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我也不说${responce}`)
+      // }
+      // TODO save to buffer
+    }
+  })
 
 app.middleware((meta, next) => {
   if (meta.message.includes(`[CQ:at,qq=${app.options.selfId}]`) || meta.message[0] === '.') {
     // 仅当接收到的信息包含 at 机器人时才继续处理
     console.log(meta.message)
+    return meta.$send(`[CQ:at,qq=${meta.userId}] @我干啥`)
+    // TODO add Turing module
+  } else {
     return next()
   }
 })
@@ -78,14 +99,3 @@ app.prependMiddleware((meta, next) => {
     return next()
   }
 })
-
-// app.middleware(async (meta, next) => {
-//   // 获取数据库中的用户信息
-//   // 这里只是示例，事实上 Koishi 会自动获取数据库中的信息并存放在 meta.$user 中
-//   const user = await app.database.getUser(meta.userId)
-//   if (user.authority === 0) {
-//     return meta.$send('抱歉，你没有权限访问机器人。')
-//   } else {
-//     return next()
-//   }
-// })
