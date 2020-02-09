@@ -45,6 +45,7 @@ function saveData() {
 function init() {
   loadData()
   setInterval(() => {
+    console.log('Saving files automatically...')
     saveData()
   }, 300000) // 300000ms -> 5min
   app.start()
@@ -168,7 +169,7 @@ app.middleware((meta, next) => {
       if (msg === repeaterData[groupId].message) {
         // is repeating
         repeaterData[groupId].times += 1
-        console.log(repeaterData[groupId].times)
+        // console.log(repeaterData[groupId].times)
         if (repeaterData[groupId].times === repeatThreshold) { 
           // repeat at repeatThreshold
           return meta.$send(msg)
