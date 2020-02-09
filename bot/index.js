@@ -12,7 +12,7 @@ const app = new App({
 var responceData = {}
 
 function init() {
-  var reader = new FileReader();
+  var reader = new window.FileReader();
   try {
     reader.readAsText('./data.json')
     responceData = JSON.parse(reader.result)
