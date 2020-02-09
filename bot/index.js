@@ -1,4 +1,5 @@
 const { App } = require('koishi')
+const fs = require('fs')
 
 const app = new App({
   type: 'http',
@@ -11,18 +12,37 @@ const app = new App({
 
 var responceData = {}
 
-function init() {
-  var reader = new window.FileReader();
-  try {
-    reader.readAsText('./data.json')
-    responceData = JSON.parse(reader.result)
-  } catch {
-    console.log('Error occured when reading data')
-    responceData = {}
-  }
+function loadData() {
+  fs.readFile('./data.json', 'utf8', (err, jsonString) => {
+    if (err) {
+        console.log("File read failed:", err)
+        responceData = {}
+    } else {
+      try {
+        responceData = JSON.parse(jsonString)
+      } catch (error) {
+        console.log('Error parsing JSON string:', err)
+        responceData = {}
+      }
+      console.log('File data:', jsonString)
+    }
+  })
 }
 
-init()
+function saveData() {
+  const jsonString = JSON.stringify(responceData)
+  fs.writeFile('./data.json', jsonString, err => {
+    if (err) {
+        console.log('Error writing file', err)
+        return false
+    } else {
+        console.log('Successfully wrote file')
+    }
+  })
+  return true
+}
+
+loadData()
 
 app.start()
 
@@ -106,6 +126,18 @@ app.middleware((meta, next) => {
     return next()
   }
 })
+
+// save command
+app.command('save')
+  .action(({ meta }) => {
+    if (meta.messageType === 'group') {
+      if (saveData()) {
+        return meta.$send('保存啦！')
+      } else {
+        return meta.$send('写文件失败，快帮我@管理员！')
+      }
+    }
+  })
 
 // repeater
 // TODO bug: fix repeat for different group
