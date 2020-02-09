@@ -24,7 +24,7 @@ function loadData() {
         console.log('Error parsing JSON string:', err)
         responceData = {}
       }
-      console.log('File data:', jsonString)
+      console.log('File data:', responceData)
     }
   })
 }
@@ -103,13 +103,15 @@ app.command('del <keyword> <responce>')
   })
 
 // message parser
-app.middleware((meta, next) => {
+app.prependMiddleware((meta, next) => {
   if (meta.messageType === 'group') {
     msg = meta.message
     // at handler
     if (msg.includes(`[CQ:at,qq=${app.options.selfId}]`)) {
       return meta.$send(`[CQ:at,qq=${meta.userId}] @我干啥`)
       // TODO add Turing module
+    } else if (msg[0] === '.') {
+      return next()
     } else {
       let groupId = meta.groupId;
       let groupData = responceData[groupId];
@@ -122,9 +124,8 @@ app.middleware((meta, next) => {
         }
       }
     }
-  } else {
-    return next()
   }
+  return next()
 })
 
 // save command
