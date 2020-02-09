@@ -103,8 +103,5 @@ dist
 # TernJS port file
 .tern-port
 
-# CoolQ
-coolq/
-
 # Bot data
 bot/data.json
