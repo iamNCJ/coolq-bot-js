@@ -105,3 +105,6 @@ dist
 
 # CoolQ
 coolq/
+
+# Bot data
+bot/data.json
