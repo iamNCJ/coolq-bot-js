@@ -1,5 +1,6 @@
 const { App } = require('koishi')
 const fs = require('fs')
+const axios = require("axios")
 
 const app = new App({
   type: 'http',
@@ -194,5 +195,32 @@ app.middleware((meta, next) => {
     }
   }
 })
+
+async function dirtyWord() {
+  const url = 'https://nmsl.shadiao.app/api.php?level=min'
+  const getData = async url => {
+    var data = ''
+    try {
+      const response = await axios.get(url)
+      data = response.data
+      // console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
+    return data
+  }
+  const data = getData(url)
+  return data
+}
+
+// dirty word command
+app.command('fuck')
+  .action( async ({ meta }) => {
+    if (meta.messageType === 'group') {
+      var data = await dirtyWord()
+      // console.log(data)
+      return meta.$send(data)
+    }
+  })
 
 init()
