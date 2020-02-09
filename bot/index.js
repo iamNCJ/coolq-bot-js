@@ -72,17 +72,23 @@ app.command('del <keyword> <responce>')
 // message parser
 app.middleware((meta, next) => {
   if (meta.messageType === 'group') {
-    ;
-  }
-})
-
-// @ handler
-app.middleware((meta, next) => {
-  if (meta.message.includes(`[CQ:at,qq=${app.options.selfId}]`)) {
-    // 仅当接收到的信息包含 at 机器人时才继续处理
-    console.log(meta.message)
-    return meta.$send(`[CQ:at,qq=${meta.userId}] @我干啥`)
-    // TODO add Turing module
+    msg = meta.message
+    // at handler
+    if (msg.includes(`[CQ:at,qq=${app.options.selfId}]`)) {
+      return meta.$send(`[CQ:at,qq=${meta.userId}] @我干啥`)
+      // TODO add Turing module
+    } else {
+      let groupId = meta.groupId;
+      let groupData = responceData[groupId];
+      for (const key in groupData) {
+        // if (!groupData[key] || groupData[key].length === 0) continue;
+        if (msg.includes(key)) {
+          // console.log(key)
+          // console.log(groupData[key][~~(Math.random() * groupData[key].length)])
+          return meta.$send(groupData[key][~~(Math.random() * groupData[key].length)])
+        }
+      }
+    }
   } else {
     return next()
   }
