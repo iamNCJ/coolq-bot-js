@@ -104,6 +104,7 @@ app.command('del <keyword> <responce>')
 
 // message parser
 app.prependMiddleware((meta, next) => {
+  // console.log(meta.message)
   if (meta.messageType === 'group') {
     msg = meta.message
     // at handler
@@ -173,34 +174,52 @@ app.command('save')
 //   }
 // })
 
+var repeaterData = {}
 
-let times = 0 // 已复读次数
-let message = '' // 当前信息
+// let times = 0 // 已复读次数
+// let message = '' // 当前信息
 
 app.middleware((meta, next) => {
-  var repeatThreshold = 2        // 触发次数
-  var atThreshold = 3            // Q人次数
-  var interruptThreshold = 6     // 打破次数
-  var interruptThresholdPlus = 8 // 超级Q人
-  if (meta.messageType === 'group' && meta.message === message) { 
+  const repeatThreshold = 2        // 触发次数
+  const atThreshold = 3            // Q人次数
+  const interruptThreshold = 6     // 打破次数
+  const interruptThresholdPlus = 8 // 超级Q人
+  if (meta.messageType === 'group') { 
     // repeater only works for group message
-    times += 1
-    // console.log(times)
-    // console.log(meta.userId)
-    if (times === repeatThreshold) return meta.$send(message)
-    else if (times == interruptThreshold) {
-      return meta.$send('打断复读')
+    let groupId = meta.groupId;
+    let msg = meta.message
+    // console.log(msg)
+    if (!repeaterData[groupId]) { // this group is not initialized
+      repeaterData[groupId] = {
+        times: 1,
+        message: msg
+      }
+    } else { // has been initialized
+      if (msg === repeaterData[groupId].message) {
+        // is repeating
+        repeaterData[groupId].times += 1
+        console.log(repeaterData[groupId].times)
+        if (repeaterData[groupId].times === repeatThreshold) { 
+          // repeat at repeatThreshold
+          return meta.$send(msg)
+        } else if (repeaterData[groupId].times == interruptThreshold) {
+          // interupt at interruptThreshold
+          return meta.$send('打断复读')
+        } else if (repeaterData[groupId].times == interruptThresholdPlus) {
+          // Q人
+          return meta.$send(`[CQ:at,qq=${meta.userId}] 在？为什么还在复读？`)
+        }
+      } else { // repeating broken
+        let lastTimes = repeaterData[groupId].times
+        repeaterData[groupId].times = 1
+        repeaterData[groupId].message = msg
+        if (lastTimes > atThreshold) {
+          // 超级Q人
+          return meta.$send(`[CQ:at,qq=${meta.userId}] 在？为什么打断复读？就这么对待群友的劳动成果？`)
+        } else {
+          return next()
+        }
+      }
     }
-    else if (times == interruptThresholdPlus) {
-      return meta.$send(`[CQ:at,qq=${meta.userId}] 在？为什么还在复读？`)
-    }
-  } else {
-    let lastTimes = times
-    times = 1
-    message = meta.message
-    if (lastTimes > atThreshold) {
-      return meta.$send(`[CQ:at,qq=${meta.userId}] 在？为什么打断复读？就这么对待群友的劳动成果？`)
-    }
-    return next()
   }
 })
