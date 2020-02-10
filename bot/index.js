@@ -111,7 +111,7 @@ app.command('del <keyword> <responce>')
 
 // message parser
 app.prependMiddleware((meta, next) => {
-  // console.log(meta.message)
+  console.log(meta.message)
   if (meta.messageType === 'group') {
     msg = meta.message
     // at handler
@@ -215,17 +215,23 @@ async function httpsGet(url) {
 
 // dirty word command
 app.command('fuck')
-  .action( async ({ meta }) => {
+  .option('-f, --force')
+  .action( async ({ meta, options }) => {
     if (meta.messageType === 'group') {
-      const url = 'https://nmsl.shadiao.app/api.php?level=min'
-      var data = await httpsGet(url)
-      // console.log(data)
-      return meta.$send(data)
+      console.log(options)
+      if (options.force) {
+        const url = 'https://nmsl.shadiao.app/api.php?level=min'
+        var data = await httpsGet(url)
+        // console.log(data)
+        return meta.$send(data)
+      } else {
+        return meta.$ban(60) // ban for 1min
+      }
     }
   })
 
 // chicken soup command
-app.command('鸡汤')
+app.command('soup')
   .action( async ({ meta }) => {
     if (meta.messageType === 'group') {
       const url = 'https://du.shadiao.app/api.php'
@@ -245,5 +251,13 @@ app.command('love')
       return meta.$send(data)
     }
   })
-  
+
+// fuck command
+app.command('fuck1')
+  .action( async ({ meta }) => {
+    if (meta.messageType === 'group') {
+      return meta.$ban(60) // ban for 1min
+    }
+  })
+
 init()
