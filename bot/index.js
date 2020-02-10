@@ -196,8 +196,7 @@ app.middleware((meta, next) => {
   }
 })
 
-async function dirtyWord() {
-  const url = 'https://nmsl.shadiao.app/api.php?level=min'
+async function httpsGet(url) {
   const getData = async url => {
     var data = ''
     try {
@@ -217,10 +216,33 @@ async function dirtyWord() {
 app.command('fuck')
   .action( async ({ meta }) => {
     if (meta.messageType === 'group') {
-      var data = await dirtyWord()
+      const url = 'https://nmsl.shadiao.app/api.php?level=min'
+      var data = await httpsGet(url)
       // console.log(data)
       return meta.$send(data)
     }
   })
 
+// chicken soup command
+app.command('鸡汤')
+  .action( async ({ meta }) => {
+    if (meta.messageType === 'group') {
+      const url = 'https://du.shadiao.app/api.php'
+      var data = await httpsGet(url)
+      // console.log(data)
+      return meta.$send(data)
+    }
+  })
+
+// 彩虹屁 command
+app.command('love')
+  .action( async ({ meta }) => {
+    if (meta.messageType === 'group') {
+      const url = 'https://chp.shadiao.app/api.php'
+      var data = await httpsGet(url)
+      // console.log(data)
+      return meta.$send(data)
+    }
+  })
+  
 init()
