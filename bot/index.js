@@ -252,8 +252,8 @@ app.command('love')
     }
   })
 
-// fuck command
-app.command('fuck1')
+// TODO BullShit command
+app.command('bullshit')
   .action( async ({ meta }) => {
     if (meta.messageType === 'group') {
       return meta.$ban(60) // ban for 1min
