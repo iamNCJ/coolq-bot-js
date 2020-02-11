@@ -51,6 +51,7 @@ function init() {
     console.log('Saving files automatically...')
     saveData()
   }, 300000) // 300000ms -> 5min
+  app.plugin(require('koishi-plugin-nlp')) // NLP module
   app.start()
   console.log('Bot started...')
 }
@@ -294,6 +295,29 @@ app.command('bullshit <keyword>')
         return meta.$send(passage)
       }
     }
+  })
+
+// app.command('bullshit <keyword>')
+//   .intend('天气', (meta) => {
+//     // 插件会在 meta.$parsed 对象中添加一个 tags 属性
+//     // 这里的 ns 表示词性为地名
+//     const tag = meta.$parsed.tags.find(({ tag }) => tag === 'n')
+//     // 返回一个置信度为 0.9 的结果
+//     // 执行时的第一个参数取匹配到的词
+//     if (tag) return { confidence: 0.9, args: [tag.word] }
+//   })
+
+app.command('bullshit <keyword>', '查天气')
+  // 插件会在 Command 实例中添加一个 intend 方法
+  // 传入的第一个参数是要匹配的关键字
+  // 第二个参数是一个函数，当匹配到关键字时会执行
+  .intend('天气', (meta) => {
+    // 插件会在 meta.$parsed 对象中添加一个 tags 属性
+    // 这里的 ns 表示词性为地名
+    const tag = meta.$parsed.tags.find(({ tag }) => tag === 'ns')
+    // 返回一个置信度为 0.9 的结果
+    // 执行时的第一个参数取匹配到的词
+    if (tag) return { confidence: 0.9, args: [tag.word] }
   })
 
 init()
