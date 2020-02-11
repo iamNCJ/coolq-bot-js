@@ -2,6 +2,7 @@ const { App } = require('koishi')
 const fs = require('fs')
 const axios = require('axios')
 const bullshit = require('./bullshit');
+const interpreter = require('PyJS').interpreter
 
 const app = new App({
   type: 'http',
@@ -293,6 +294,25 @@ app.command('bullshit <keyword>')
         // console.log(keyword)
         return meta.$send(passage)
       }
+    }
+  })
+
+// Python command
+app.command('py <longArg...>')
+  .action( async ({ meta }, longArg) => {
+    if (meta.messageType === 'group') {
+      res = 'Python 3.8.1 (default) [NodeJS 13.0.0] on linux\n>>>'
+      if (longArg !== undefined) {
+        if (isDebug) console.log(longArg)
+        try {
+          interpreter.interpret(longArg)
+          res = interpreter.output
+        } catch(e) {
+          res = e.toString()
+        }
+      }
+      // console.log(res)
+      return meta.$send(res)
     }
   })
 
