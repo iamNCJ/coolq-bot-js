@@ -58,50 +58,50 @@ app.command('echo <message>')
   .action(({ meta }, message) => meta.$send(message))
 
 // add command
-app.command('add <keyword> <responce>')
-  .action(({ meta }, keyword, responce) => {
+app.command('add <keyword> <response>')
+  .action(({ meta }, keyword, response) => {
     if (meta.messageType === 'group') {
-      if (responce === undefined) {
+      if (response === undefined) {
         meta.$send(`[CQ:at,qq=${meta.userId}] 你差参数！`)
       } else {
         let groupId = meta.groupId;
         if (!responceData[groupId]) responceData[groupId] = {}
         if (!responceData[groupId][keyword]) responceData[groupId][keyword] = []
-        if (responceData[groupId][keyword].indexOf(responce) + 1) {
+        if (responceData[groupId][keyword].indexOf(response) + 1) {
           meta.$send(`[CQ:at,qq=${meta.userId}] 我已经会说这个了！`)
         } else {
-          responceData[groupId][keyword].push(responce)
+          responceData[groupId][keyword].push(response)
           // console.log(responceData) // debug
-          meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我说${responce}`)
+          meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我说${response}`)
         }
       }
     }
   })
 
 // del command
-app.command('del <keyword> <responce>')
-  .action(({ meta }, keyword, responce) => {
+app.command('del <keyword> <response>')
+  .action(({ meta }, keyword, response) => {
     if (meta.messageType === 'group') {
       let groupId = meta.groupId;
-      if (responce === undefined) {
+      if (response === undefined) {
         meta.$send(`[CQ:at,qq=${meta.userId}] 你差参数！`)
       } else if (!responceData[groupId] || !responceData[groupId][keyword]) {
         meta.$send(`[CQ:at,qq=${meta.userId}] 我本来就不会说这个！`)
       } else { // keyword is in data
         // console.log(responceData[groupId][keyword].indexOf(responce))
-        if (responce == '/all') { // delete all
+        if (response == '/all') { // delete all
           delete responceData[groupId][keyword]
           meta.$send(`[CQ:at,qq=${meta.userId}] 我再也不回应${keyword}啦`)
-        } else if (responceData[groupId][keyword].indexOf(responce) + 1) {
+        } else if (responceData[groupId][keyword].indexOf(response) + 1) {
           // responce is in data
           responceData[groupId][keyword] = 
             responceData[groupId][keyword].filter(function(value, index, arr){
-              return value != responce
+              return value != response
             })
             if (responceData[groupId][keyword].length === 0) { // check empty array
               delete responceData[groupId][keyword]
             }
-          meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我也不说${responce}`)
+          meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我也不说${response}`)
         } else { // keyword in data but responce not in
           meta.$send(`[CQ:at,qq=${meta.userId}] 我本来就不会说这个！`)
         }
