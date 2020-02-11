@@ -304,11 +304,16 @@ app.command('py <longArg...>')
       res = 'Python 3.8.1 (default) [NodeJS 13.0.0] on linux\n>>>'
       if (longArg !== undefined) {
         if (isDebug) console.log(longArg)
-        try {
-          interpreter.interpret(longArg)
-          res = interpreter.output
-        } catch(e) {
-          res = e.toString()
+        if (longArg.includes('while') || longArg.includes('for')) {
+          // forbids loop in case infinite loop
+          res = '[CQ:face,id=14]'
+        } else {
+          try {
+            interpreter.interpret(longArg)
+            res = interpreter.output
+          } catch(e) {
+            res = e.toString()
+          }
         }
       }
       // console.log(res)
