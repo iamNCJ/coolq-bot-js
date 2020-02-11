@@ -12,6 +12,7 @@ const app = new App({
   commandPrefix: '.'
 })
 
+var isDebug = false
 var responceData = {}
 
 function loadData() {
@@ -112,7 +113,9 @@ app.command('del <keyword> <response>')
 
 // message parser
 app.prependMiddleware((meta, next) => {
-  console.log(meta.message)
+  if (isDebug) {
+    console.log(meta.message)
+  }
   if (meta.messageType === 'group') {
     msg = meta.message
     // at handler
@@ -261,6 +264,15 @@ app.command('saohua')
       var data = await httpsGet(url)
       // console.log(data)
       return meta.$send(data)
+    }
+  })
+
+// debug command
+app.command('debug')
+  .action( async ({ meta }) => {
+    if (meta.messageType === 'group') {
+      isDebug = !isDebug
+      return meta.$send(isDebug ? 'Debugging' : 'Stopped Debugging')
     }
   })
 
