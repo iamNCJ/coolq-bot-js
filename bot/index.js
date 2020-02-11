@@ -222,7 +222,7 @@ app.command('fuck')
   .option('-f, --force')
   .action( async ({ meta, options }) => {
     if (meta.messageType === 'group') {
-      console.log(options)
+      // console.log(options)
       if (options.force) {
         const url = 'https://nmsl.shadiao.app/api.php?level=min'
         var data = await httpsGet(url)
