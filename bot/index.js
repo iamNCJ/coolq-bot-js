@@ -253,6 +253,17 @@ app.command('love')
     }
   })
 
+// wechat moments command
+app.command('saohua')
+  .action( async ({ meta }) => {
+    if (meta.messageType === 'group') {
+      const url = 'https://pyq.shadiao.app/api.php'
+      var data = await httpsGet(url)
+      // console.log(data)
+      return meta.$send(data)
+    }
+  })
+
 // BullShit command
 app.command('bullshit <keyword>')
   .option('-l, --length [300]')
