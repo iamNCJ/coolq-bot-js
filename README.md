@@ -51,6 +51,8 @@ docker run -d -p 8080:8080 bot
 
 [https://koishi.js.org/](https://koishi.js.org/)
 
+[https://github.com/yzyzsun/PyJS](https://github.com/yzyzsun/PyJS)
+
 [https://github.com/suulnnka/BullshitGenerator](https://github.com/suulnnka/BullshitGenerator)
 
 [https://shadiao.app/](https://shadiao.app/)
