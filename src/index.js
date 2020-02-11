@@ -2,6 +2,7 @@ const { App } = require('koishi')
 const fs = require('fs')
 const axios = require('axios')
 const bullshit = require('./bullshit');
+const interpreter = require('PyJS').interpreter
 
 const app = new App({
   type: 'http',
@@ -295,5 +296,31 @@ app.command('bullshit <keyword>')
       }
     }
   })
+
+// Python command
+app.command('python <longArg...>')
+  .action( async ({ meta }, longArg) => {
+    if (meta.messageType === 'group') {
+      res = 'Python 3.8.1 (default) [NodeJS 13.0.0] on linux\n>>>'
+      if (longArg !== undefined) {
+        if (isDebug) console.log(longArg)
+        if (longArg.includes('while') || longArg.includes('for')) {
+          // forbids loop in case of infinite loop
+          res = '[CQ:face,id=14]'
+        } else {
+          try {
+            interpreter.interpret(longArg)
+            res = interpreter.output
+          } catch(e) {
+            res = e.toString()
+          }
+        }
+      }
+      // console.log(res)
+      return meta.$send(res)
+    }
+  })
+
+app.command('python').alias('py')
 
 init()

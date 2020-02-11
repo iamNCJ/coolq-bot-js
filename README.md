@@ -17,6 +17,9 @@
   - `soup`, `love`, etc.
     - using APIs from [https://shadiao.app/](https://shadiao.app/)
     - send the content to group chats when triggered
+- Python Interpreter
+  - Using [PyJS](http://projects.yzyzsun.me/pyjs/) backend
+  - forbids loop in case of infinite loop
 
 ## Deploy
 
@@ -47,6 +50,8 @@ docker run -d -p 8080:8080 bot
 ## Reference
 
 [https://koishi.js.org/](https://koishi.js.org/)
+
+[https://github.com/yzyzsun/PyJS](https://github.com/yzyzsun/PyJS)
 
 [https://github.com/suulnnka/BullshitGenerator](https://github.com/suulnnka/BullshitGenerator)
 
