@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # Bot data
-bot/data.json
+src/data.json
