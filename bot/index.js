@@ -1,6 +1,7 @@
 const { App } = require('koishi')
 const fs = require('fs')
-const axios = require("axios")
+const axios = require('axios')
+const bullshit = require('./bullshit');
 
 const app = new App({
   type: 'http',
@@ -11,6 +12,7 @@ const app = new App({
   commandPrefix: '.'
 })
 
+var isDebug = false
 var responceData = {}
 
 function loadData() {
@@ -57,50 +59,50 @@ app.command('echo <message>')
   .action(({ meta }, message) => meta.$send(message))
 
 // add command
-app.command('add <keyword> <responce>')
-  .action(({ meta }, keyword, responce) => {
+app.command('add <keyword> <response>')
+  .action(({ meta }, keyword, response) => {
     if (meta.messageType === 'group') {
-      if (responce === undefined) {
+      if (response === undefined) {
         meta.$send(`[CQ:at,qq=${meta.userId}] 你差参数！`)
       } else {
         let groupId = meta.groupId;
         if (!responceData[groupId]) responceData[groupId] = {}
         if (!responceData[groupId][keyword]) responceData[groupId][keyword] = []
-        if (responceData[groupId][keyword].indexOf(responce) + 1) {
+        if (responceData[groupId][keyword].indexOf(response) + 1) {
           meta.$send(`[CQ:at,qq=${meta.userId}] 我已经会说这个了！`)
         } else {
-          responceData[groupId][keyword].push(responce)
+          responceData[groupId][keyword].push(response)
           // console.log(responceData) // debug
-          meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我说${responce}`)
+          meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我说${response}`)
         }
       }
     }
   })
 
 // del command
-app.command('del <keyword> <responce>')
-  .action(({ meta }, keyword, responce) => {
+app.command('del <keyword> <response>')
+  .action(({ meta }, keyword, response) => {
     if (meta.messageType === 'group') {
       let groupId = meta.groupId;
-      if (responce === undefined) {
+      if (response === undefined) {
         meta.$send(`[CQ:at,qq=${meta.userId}] 你差参数！`)
       } else if (!responceData[groupId] || !responceData[groupId][keyword]) {
         meta.$send(`[CQ:at,qq=${meta.userId}] 我本来就不会说这个！`)
       } else { // keyword is in data
         // console.log(responceData[groupId][keyword].indexOf(responce))
-        if (responce == '/all') { // delete all
+        if (response == '/all') { // delete all
           delete responceData[groupId][keyword]
           meta.$send(`[CQ:at,qq=${meta.userId}] 我再也不回应${keyword}啦`)
-        } else if (responceData[groupId][keyword].indexOf(responce) + 1) {
+        } else if (responceData[groupId][keyword].indexOf(response) + 1) {
           // responce is in data
           responceData[groupId][keyword] = 
             responceData[groupId][keyword].filter(function(value, index, arr){
-              return value != responce
+              return value != response
             })
             if (responceData[groupId][keyword].length === 0) { // check empty array
               delete responceData[groupId][keyword]
             }
-          meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我也不说${responce}`)
+          meta.$send(`[CQ:at,qq=${meta.userId}] 你说${keyword}，我也不说${response}`)
         } else { // keyword in data but responce not in
           meta.$send(`[CQ:at,qq=${meta.userId}] 我本来就不会说这个！`)
         }
@@ -111,7 +113,9 @@ app.command('del <keyword> <responce>')
 
 // message parser
 app.prependMiddleware((meta, next) => {
-  // console.log(meta.message)
+  if (isDebug) {
+    console.log(meta.message)
+  }
   if (meta.messageType === 'group') {
     msg = meta.message
     // at handler
@@ -196,8 +200,8 @@ app.middleware((meta, next) => {
   }
 })
 
-async function dirtyWord() {
-  const url = 'https://nmsl.shadiao.app/api.php?level=min'
+// get responce from https
+async function httpsGet(url) {
   const getData = async url => {
     var data = ''
     try {
@@ -215,11 +219,80 @@ async function dirtyWord() {
 
 // dirty word command
 app.command('fuck')
+  .option('-f, --force')
+  .action( async ({ meta, options }) => {
+    if (meta.messageType === 'group') {
+      console.log(options)
+      if (options.force) {
+        const url = 'https://nmsl.shadiao.app/api.php?level=min'
+        var data = await httpsGet(url)
+        // console.log(data)
+        return meta.$send(data)
+      } else {
+        return meta.$ban(60) // ban for 1min
+      }
+    }
+  })
+
+// chicken soup command
+app.command('soup')
   .action( async ({ meta }) => {
     if (meta.messageType === 'group') {
-      var data = await dirtyWord()
+      const url = 'https://du.shadiao.app/api.php'
+      var data = await httpsGet(url)
       // console.log(data)
       return meta.$send(data)
+    }
+  })
+
+// 彩虹屁 command
+app.command('love')
+  .action( async ({ meta }) => {
+    if (meta.messageType === 'group') {
+      const url = 'https://chp.shadiao.app/api.php'
+      var data = await httpsGet(url)
+      // console.log(data)
+      return meta.$send(data)
+    }
+  })
+
+// wechat moments command
+app.command('saohua')
+  .action( async ({ meta }) => {
+    if (meta.messageType === 'group') {
+      const url = 'https://pyq.shadiao.app/api.php'
+      var data = await httpsGet(url)
+      // console.log(data)
+      return meta.$send(data)
+    }
+  })
+
+// debug command
+app.command('debug')
+  .action( async ({ meta }) => {
+    if (meta.messageType === 'group') {
+      isDebug = !isDebug
+      return meta.$send(isDebug ? 'Debugging' : 'Stopped Debugging')
+    }
+  })
+
+// BullShit command
+app.command('bullshit <keyword>')
+  .option('-l, --length [300]')
+  .action( async ({ meta, options }, keyword) => {
+    if (meta.messageType === 'group') {
+      if (keyword === undefined) {
+        return meta.$send(`[CQ:at,qq=${meta.userId}] 给我个主题啊！`)
+      } else {
+        passage = ''
+        if (options.length * 1) { // check if value is number
+          passage = bullshit.genPassage(keyword, options.length * 1)
+        } else {
+          passage = bullshit.genPassage(keyword)
+        }
+        // console.log(keyword)
+        return meta.$send(passage)
+      }
     }
   })
 
