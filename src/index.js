@@ -298,14 +298,14 @@ app.command('bullshit <keyword>')
   })
 
 // Python command
-app.command('py <longArg...>')
+app.command('python <longArg...>')
   .action( async ({ meta }, longArg) => {
     if (meta.messageType === 'group') {
       res = 'Python 3.8.1 (default) [NodeJS 13.0.0] on linux\n>>>'
       if (longArg !== undefined) {
         if (isDebug) console.log(longArg)
         if (longArg.includes('while') || longArg.includes('for')) {
-          // forbids loop in case infinite loop
+          // forbids loop in case of infinite loop
           res = '[CQ:face,id=14]'
         } else {
           try {
@@ -320,5 +320,7 @@ app.command('py <longArg...>')
       return meta.$send(res)
     }
   })
+
+app.command('python').alias('py')
 
 init()
