@@ -237,7 +237,7 @@ function 增加段落(段落){
     return '　　' + 段落 + '。 '
 }
 
-function 生成文章(主题, 字数=300){
+function genPassage(主题, 字数=300){
     let 文章 = []
     let 段落 = '';
     let 文章长度 = 0;
@@ -260,7 +260,11 @@ function 生成文章(主题, 字数=300){
     段落 = 增加段落(段落);
     文章.push(段落);
 
-    return 文章
+    return 文章.toString()
 }
 
-// console.log(生成文章('测试', 1000))
+// console.log(genPassage('测试', 1000))
+
+module.exports = {
+    genPassage
+}

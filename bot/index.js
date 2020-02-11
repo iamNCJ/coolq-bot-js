@@ -1,6 +1,7 @@
 const { App } = require('koishi')
 const fs = require('fs')
-const axios = require("axios")
+const axios = require('axios')
+const bullshit = require('./bullshit');
 
 const app = new App({
   type: 'http',
@@ -252,11 +253,23 @@ app.command('love')
     }
   })
 
-// TODO BullShit command
-app.command('bullshit')
-  .action( async ({ meta }) => {
+// BullShit command
+app.command('bullshit <keyword>')
+  .option('-l, --length [300]')
+  .action( async ({ meta, options }, keyword) => {
     if (meta.messageType === 'group') {
-      return meta.$ban(60) // ban for 1min
+      if (keyword === undefined) {
+        return meta.$send(`[CQ:at,qq=${meta.userId}] 给我个主题啊！`)
+      } else {
+        passage = ''
+        if (options.length * 1) { // check if value is number
+          passage = bullshit.genPassage(keyword, options.length * 1)
+        } else {
+          passage = bullshit.genPassage(keyword)
+        }
+        // console.log(keyword)
+        return meta.$send(passage)
+      }
     }
   })
 
