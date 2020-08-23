@@ -1,5 +1,7 @@
 # QQ Chatbot - based on CoolQ HTTP plugin and JavaScript
 
+> ***No Longer Working!!!*** Due to changes in policy, all QQ robots are banned now, and so does CoolQ, which is the dependency of this repo. Hence, this repo can no longer work.
+
 ## Functions
 
 - super repeater
